@@ -1,18 +1,19 @@
 puts "Введите коэффициент а:"
-a = gets.chomp
+a = gets.chomp.to_f
 puts "Введите коэффициент b:"
-b = gets.chomp
+b = gets.chomp.to_f
 puts "Введите коэффициент c:"
-c = gets.chomp
-d = b.to_f**2 - 4 * a.to_f * c.to_f
+c = gets.chomp.to_f
+d = b**2 - 4 * a * c
 if d > 0
-	puts "Дискриминант = #{d}"
-	puts "X1 = #{(Math.sqrt(d) - b.to_f)/(2 * a.to_f)}"
-	puts "X2 = #{(-Math.sqrt(d) - b.to_f)/(2 * a.to_f)}"
+  s = Math.sqrt(d)
+  puts "Дискриминант = #{d}"
+  puts "X1 = #{(s - b)/(2 * a)}"
+  puts "X2 = #{(-s - b)/(2 * a)}"
 elsif d == 0
-	puts "Дискриминант = #{d}"
-	puts "X1 = X2 = #{(Math.sqrt(d) - b.to_f)/(2 * a.to_f)}"
+  puts "Дискриминант = #{d}"
+  puts "X1 = X2 = #{(-b)/(2 * a)}"
 else 
-	puts "Дискриминант = #{d}"
-	puts "Корней нет"
+  puts "Дискриминант = #{d}"
+  puts "Корней нет"
 end   
