@@ -1,7 +1,9 @@
-array = [0,1]
-array.each_index do |i|
-  x = array[i] + array[i+1]
-  break if x > 100
-  array << x
+array = []
+x = 0
+y = 1
+while x < 100 do
+array << x << y
+x += y
+y += x  
 end
 puts array
