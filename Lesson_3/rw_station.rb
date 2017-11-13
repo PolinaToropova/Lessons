@@ -1,27 +1,26 @@
 class Station
   
-  attr_reader :name, :train_list  
+  attr_reader :name, :trains  
   
   def initialize(name) 
     @name = name
-    @train_list = []
+    @trains = []
   end
   
-  def take_train=(train)
-    @train = train
-    @train_list << train
+  def take_train(train)
+   train.current_station.trains.delete(train)
+   @trains << train
   end
 
-  def train_type=(train_type)
+  def train_type(train_type)
     count = 0
-    train_list.each do |train|  
+    trains.each do |train|  
       count += 1 if train.type == train_type
     end 
-    puts count   
   end
   
-  def send_train=(train)
-    @train_list.delete(train)
+  def send_train(train)
+    @trains.delete(train)
   end
 end
 
@@ -33,11 +32,11 @@ class Route
     @stations = [from, to]
   end
 
-  def inter=(inter_station)       
-    @stations.insert -2, inter_station
+  def inter(inter_station)       
+    @stations.insert(-2, inter_station)
   end
 
-  def remove_inter=(inter_station)   
+  def remove_inter(inter_station)   
     @stations.delete(inter_station)
   end
 end
@@ -46,7 +45,7 @@ class Train
 
   self
    
-  attr_reader :carr_count,:type, :tr_numb, :speed 
+  attr_reader :carr_count,:type, :tr_numb, :speed
    
   def initialize(tr_numb, type, carr_count) 
     @tr_numb = tr_numb
@@ -74,44 +73,45 @@ class Train
     end
   end
 
-  def take_route=(taken_route, station_index = 0)
-    @station_index = station_index
-    @taken_route = taken_route
-    @station_arr = @taken_route.stations
-    if self.current_station.train_list.include?(self) == false    
-      self.current_station.take_train = self
-    end        
+  def take_route(route)
+    @route = route
+    @route.stations.first.take_train(self) 
   end
 
   def current_station
-    @current_station = @station_arr[@station_index]
+    @station_index = 0        
+    while @station_index < (@route.stations.size-1)
+    break if @route.stations[@station_index].trains.include?(self)
+      @station_index += 1
+    end
+    @current_station = @route.stations[@station_index]
   end
 
   def go_forward 
-    self.current_station.send_train = self
-    @station_index = @station_arr.index(self.next_station)
-    self.current_station.take_train = self
-   end
+    if self.current_station != @route.stations.last
+      @route.stations[@station_index+1].take_train(self)      
+    end
+  end
 
   def go_back
-    self.current_station.send_train = self
-    @station_index = @station_arr.index(self.prev_station)
-    self.current_station.take_train = self
+    if self.current_station != @route.stations.first
+      @route.stations[@station_index-1].take_train(self)      
+    end
   end
 
   def next_station
-    if (@station_index + 1) < @station_arr.size
-      @station_arr[@station_index + 1]
+    if (@station_index + 1) < @route.stations.size
+      @route.stations[@station_index + 1]
     else 
-      @station_arr.last
+      @route.stations.last
     end
   end 
 
   def prev_station
     if @station_index != 0
-      @station_arr[@station_index - 1]
+      @route.stations[@station_index - 1]
     else 
-      @station_arr[0]
+      @route.stations[0]
     end
   end
 end
