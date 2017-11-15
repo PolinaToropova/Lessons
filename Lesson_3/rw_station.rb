@@ -8,7 +8,6 @@ class Station
   end
   
   def take_train(train)
-   train.current_station.trains.delete(train)
    @trains << train
   end
 
@@ -16,7 +15,8 @@ class Station
     count = 0
     trains.each do |train|  
       count += 1 if train.type == train_type
-    end 
+    end
+    return count 
   end
   
   def send_train(train)
@@ -75,28 +75,28 @@ class Train
 
   def take_route(route)
     @route = route
-    @route.stations.first.take_train(self) 
+    @station_index = 0                     
+    self.current_station.take_train(self)
   end
 
   def current_station
-    @station_index = 0        
-    while @station_index < (@route.stations.size-1)
-    break if @route.stations[@station_index].trains.include?(self)
-      @station_index += 1
-    end
     @current_station = @route.stations[@station_index]
   end
 
   def go_forward 
-    if self.current_station != @route.stations.last
-      @route.stations[@station_index+1].take_train(self)      
+    self.current_station.send_train(self)
+    if self.current_station != @route.stations.last  
+      @station_index = @route.stations.index(self.next_station)
     end
+    self.current_station.take_train(self)
   end
 
   def go_back
+    self.current_station.send_train(self)
     if self.current_station != @route.stations.first
-      @route.stations[@station_index-1].take_train(self)      
+      @station_index = @route.stations.index(self.prev_station)
     end
+    self.current_station.take_train(self)
   end
 
   def next_station
