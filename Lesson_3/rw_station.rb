@@ -16,7 +16,7 @@ class Station
     trains.each do |train|  
       count += 1 if train.type == train_type
     end
-    return count 
+    count 
   end
   
   def send_train(train)
@@ -43,8 +43,6 @@ end
 
 class Train
 
-  self
-   
   attr_reader :carr_count,:type, :tr_numb, :speed
    
   def initialize(tr_numb, type, carr_count) 
@@ -59,7 +57,7 @@ class Train
   end
 
   def stop              
-    self.speed = 0
+    @speed = 0
   end
 
   def carr_clutch      
@@ -80,23 +78,23 @@ class Train
   end
 
   def current_station
-    @current_station = @route.stations[@station_index]
+    @route.stations[@station_index]
   end
 
   def go_forward 
-    self.current_station.send_train(self)
     if self.current_station != @route.stations.last  
-      @station_index = @route.stations.index(self.next_station)
+      self.current_station.send_train(self)
+      @station_index += 1
+      self.current_station.take_train(self)
     end
-    self.current_station.take_train(self)
   end
 
   def go_back
-    self.current_station.send_train(self)
     if self.current_station != @route.stations.first
-      @station_index = @route.stations.index(self.prev_station)
+      self.current_station.send_train(self)
+      @station_index -= 1
+      self.current_station.take_train(self)
     end
-    self.current_station.take_train(self)
   end
 
   def next_station
